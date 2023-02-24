@@ -1,5 +1,7 @@
 import json
+from datetime import datetime
 
+from django.db.models import Q
 from django.shortcuts import render
 from django.views.generic.list import ListView
 
@@ -18,8 +20,16 @@ class ExpenseListView(ListView):
         form = ExpenseSearchForm(self.request.GET)
         if form.is_valid():
             name = form.cleaned_data.get('name', '').strip()
+            from_date = form.cleaned_data.get('from_date')
+            to_date = form.cleaned_data.get('to_date')
             if name:
                 queryset = queryset.filter(name__icontains=name)
+            if from_date:
+                from_datetime = datetime.combine(from_date, datetime.min.time())
+                queryset = queryset.filter(date__gte=from_datetime)
+            if to_date:
+                to_datetime = datetime.combine(to_date, datetime.min.time())
+                queryset = queryset.filter(date__lte=to_datetime)
 
         return super().get_context_data(
             form=form,
@@ -49,3 +59,5 @@ def add_data_to_database(request):
                 Expense.objects.update_or_create(pk=item['pk'], defaults=expense_fields)
 
     return render(request, 'base.html')
+
+
