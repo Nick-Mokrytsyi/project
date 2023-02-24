@@ -11,4 +11,5 @@ urlpatterns = [
          include(('expenses.urls', 'expenses'), namespace='expenses')),
 
     path('add_data/', add_data_to_database, name='add_data'),
+
 ]

@@ -1,0 +1,11 @@
+<form method="get">
+  {{ form.as_p }}
+  <button type="submit">Search</button>
+</form>
+{% if results %}
+  <ul>
+  {% for result in results %}
+    <li>{{ result }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}

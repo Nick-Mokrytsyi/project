@@ -50,4 +50,6 @@ urlpatterns = [
             template_name='generic_delete.html'
          ),
          name='category-delete'),
+
+
 ]

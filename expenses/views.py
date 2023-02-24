@@ -28,7 +28,7 @@ class ExpenseListView(ListView):
                 from_datetime = datetime.combine(from_date, datetime.min.time())
                 queryset = queryset.filter(date__gte=from_datetime)
             if to_date:
-                to_datetime = datetime.combine(to_date, datetime.min.time())
+                to_datetime = datetime.combine(to_date, datetime.max.time())
                 queryset = queryset.filter(date__lte=to_datetime)
 
         return super().get_context_data(
