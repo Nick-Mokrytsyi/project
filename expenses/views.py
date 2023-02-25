@@ -14,10 +14,35 @@ class ExpenseListView(ListView):
     model = Expense
     paginate_by = 5
 
+    def get_queryset(self):
+
+        queryset = super().get_queryset()
+
+        sort_by = self.request.GET.get('sort_by')
+
+        match sort_by:
+            case "category":
+                queryset = queryset.order_by('category__name')
+            case "category_desc":
+                queryset = queryset.order_by('-category__name')
+            case "date":
+                queryset = queryset.order_by('date')
+            case 'date_desc':
+                queryset = queryset.order_by('-date')
+
+        category_ids = self.request.GET.getlist('category')
+
+        if category_ids:
+            queryset = queryset.filter(category_id__in=category_ids)
+
+        return queryset
+
     def get_context_data(self, *, object_list=None, **kwargs):
+
         queryset = object_list if object_list is not None else self.object_list
 
         form = ExpenseSearchForm(self.request.GET)
+
         if form.is_valid():
             name = form.cleaned_data.get('name', '').strip()
             from_date = form.cleaned_data.get('from_date')
