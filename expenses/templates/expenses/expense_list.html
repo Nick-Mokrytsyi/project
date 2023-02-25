@@ -11,8 +11,10 @@
         <a href="?sort_by=date">Sort by date (ascending)</a>
         <br>
         <a href="?sort_by=date_desc">Sort by date (descending)</a>
+        <br>
+        <a href="?category=1&category=2">Sort be category</a>
 
-        {#to tell you truth this block of code help me to do GOOGLE/STACKOVERFLOW        #}
+        {#to tell you truth this block of code help me to do GOOGLE/STACKOVERFLOW       #}
         {#        <a href="?sort_by=category{% if sort_by == 'category' %}_desc{% endif %}{% if category_ids %}&{% endif %}{% for category_id in category_ids %}category=#}
         {#            {{ category_id }}{% if not forloop.last %}&{% endif %}{% endfor %}">Sort by category#}
         {#            {% if sort_by == 'category' %} (desc){% endif %}</a>#}
