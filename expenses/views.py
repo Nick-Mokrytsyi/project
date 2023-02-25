@@ -33,7 +33,8 @@ class ExpenseListView(ListView):
         category_ids = self.request.GET.getlist('category')
 
         if category_ids:
-            queryset = queryset.filter(category_id__in=category_ids)
+            queryset = queryset.filter(category__id__in=category_ids)
+            # in: the field value is in a list of values;
 
         return queryset
 
@@ -49,12 +50,15 @@ class ExpenseListView(ListView):
             to_date = form.cleaned_data.get('to_date')
             if name:
                 queryset = queryset.filter(name__icontains=name)
+                # icontains: the field value contains a given substring case-insensitive
             if from_date:
                 from_datetime = datetime.combine(from_date, datetime.min.time())
                 queryset = queryset.filter(date__gte=from_datetime)
+                # gte: the field value is greater than or equal to a given value
             if to_date:
                 to_datetime = datetime.combine(to_date, datetime.max.time())
                 queryset = queryset.filter(date__lte=to_datetime)
+                # lte: the field value is less than or equal to a given value;
 
         return super().get_context_data(
             form=form,
