@@ -4,23 +4,31 @@
 <a href="{% url 'expenses:category-create' %}">add</a>
 
 <table border="1">
-	<thead>
-		<tr>
-			<th>name</th>
-			<th>actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for obj in object_list %}
-		<tr>
-			<td>
-				{{obj.name}}
-			</td>
-			<td>
-				<a href="{% url 'expenses:category-delete' obj.id %}">delete</a>
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>actions</th>
+            <th class="text-center">number of expenses</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for obj in object_list %}
+        <tr>
+            <td class="text-center">
+                {{ obj.name }}
+            </td>
+            <td class="text-center">
+                <a href="{% url 'expenses:category-delete' obj.id %}">delete | </a>
+                <a href="{% url 'expenses:category-edit' obj.id %}">edit</a>
+            </td>
+            <td class="text-center">
+                {{ obj.expense_count }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock %}
+
+
+

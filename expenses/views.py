@@ -1,7 +1,8 @@
 import json
 from datetime import datetime
 
-from django.db.models import Q
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncMonth
 from django.shortcuts import render
 from django.views.generic.list import ListView
 
@@ -42,6 +43,32 @@ class ExpenseListView(ListView):
 
         queryset = object_list if object_list is not None else self.object_list
 
+        total_amount = queryset.aggregate(total=Sum('amount'))['total']
+        """
+        In Django, the aggregate method is a queryset method that allows you to compute an aggregate value over 
+        the queryset, such as the sum, average, minimum, or maximum value of a specific field. The aggregate method 
+        takes one or more keyword arguments that specify the aggregation functions to apply, and the fields to which 
+        those functions should be applied. Each keyword argument should be in the form <name>=<function>('field'), 
+        where <name> is a name for the result of the aggregation, <function>(import from Django db.models  is the 
+        aggregation function to apply, and 'field' is the name of the field to which the aggregation 
+        function should be applied. 
+        """
+
+        summary_per_month = queryset.annotate(year_month=TruncMonth('date')).values('year_month').annotate(
+            total=Sum('amount')).order_by('-year_month')
+
+        """
+        Not mine method, GOOGLE/STACKOVERFLOW help me to do it, a little bit hard to understand it
+
+        n Django, annotate is a queryset method that allows you to add computed fields to each object in the queryset 
+        based on the values of one or more fields. These computed fields can be used for filtering, ordering, 
+        or displaying the data in the template. The annotate method takes one or more keyword arguments that specify 
+        the computed fields to add, and the functions or expressions used to compute their values. Each keyword 
+        argument should be in the form <name>=<expression>, where <name> is the name of the computed field, 
+        and <expression> is the function or expression used to compute its value. 
+
+        """
+
         form = ExpenseSearchForm(self.request.GET)
 
         if form.is_valid():
@@ -63,13 +90,20 @@ class ExpenseListView(ListView):
         return super().get_context_data(
             form=form,
             object_list=queryset,
+            total_amount=round(total_amount, 2),
             summary_per_category=summary_per_category(queryset),
+            summary_per_month=summary_per_month,
             **kwargs)
 
 
 class CategoryListView(ListView):
     model = Category
     paginate_by = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(expense_count=Count('expense'))
+        return queryset
 
 
 def add_data_to_database(request):
@@ -90,3 +124,8 @@ def add_data_to_database(request):
     return render(request, 'base.html')
 
 
+# class CategoryUpdateView(UpdateView):
+#     model = Category
+#     template_name = 'category_update.html'
+#     form_class = CategoryUpdateForm
+#     success_url = reverse_lazy('expenses:expense-list')

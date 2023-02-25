@@ -77,4 +77,21 @@
             {% endfor %}
         </tr>
     </table>
+    <p>Total amount spent: ${{ total_amount }}</p>
+    <table>
+        <thead>
+        <tr>
+            <th>Year-Month</th>
+            <th>Total Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in summary_per_month %}
+            <tr>
+                <td>{{ item.year_month|date:"F Y" }}</td>
+                <td>${{ item.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
